@@ -471,6 +471,19 @@
     border-radius: 6px;
 }
 
+/* Minimum Stay Error */
+.min-stay-error {
+    background: rgba(224, 85, 85, 0.1);
+    border: 1px solid rgba(224, 85, 85, 0.4);
+    color: #e05555;
+    border-radius: 8px;
+    padding: 0.85rem 1.1rem;
+    font-size: 0.9rem;
+    font-weight: 500;
+    margin-bottom: 1.5rem;
+    text-align: center;
+}
+
 /* Selected Dates Display */
 .selected-dates-display {
     display: flex;

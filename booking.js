@@ -274,6 +274,7 @@ document.addEventListener('DOMContentLoaded', () => {
             checkInDate = date;
             checkOutDate = null;
             selectingCheckOut = true;
+            document.getElementById('minStayError').style.display = 'none';
         } else {
             if (hasUnavailableInRange(checkInDate, date)) {
                 checkInDate = date;
@@ -282,11 +283,11 @@ document.addEventListener('DOMContentLoaded', () => {
             } else {
                 const nightsSelected = Math.round((date - checkInDate) / (1000 * 60 * 60 * 24));
                 if (nightsSelected < 2) {
-                    // Reset and show message inline via display update
-                    checkInDate = date;
+                    document.getElementById('minStayError').style.display = 'block';
                     checkOutDate = null;
                     selectingCheckOut = true;
                 } else {
+                    document.getElementById('minStayError').style.display = 'none';
                     checkOutDate = date;
                     selectingCheckOut = false;
                 }
@@ -423,22 +424,7 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        // Show loading state
-        const originalText = submitBtn.querySelector('span').textContent;
-        submitBtn.querySelector('span').textContent = 'Sending...';
-        submitBtn.disabled = true;
-
-        // Build form data
-        const formData = new FormData(bookingForm);
-        formData.set('checkIn', formatDateDisplay(checkInDate));
-        formData.set('checkOut', formatDateDisplay(checkOutDate));
-        formData.set('weddingInterest', document.getElementById('weddingInterest').checked ? 'Yes' : 'No');
-
-        // Calculate nights
-        const nights = Math.round((checkOutDate - checkInDate) / (1000 * 60 * 60 * 24));
-        formData.set('nights', nights + ' night(s)');
-
-        // Calculate and attach price breakdown
+        // Calculate price breakdown and populate hidden inputs BEFORE FormData is built
         const RATE_WEEKDAY = 1800;
         const RATE_WEEKEND = 2000;
         const CLEANING_FEE = 500;
@@ -459,6 +445,21 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('priceSubtotal').value = fmt(subtotal);
         document.getElementById('priceTax').value = fmt(tax) + ' (8.25%)';
         document.getElementById('priceTotal').value = fmt(total);
+
+        // Show loading state
+        const originalText = submitBtn.querySelector('span').textContent;
+        submitBtn.querySelector('span').textContent = 'Sending...';
+        submitBtn.disabled = true;
+
+        // Build form data (hidden inputs are now populated above)
+        const formData = new FormData(bookingForm);
+        formData.set('checkIn', formatDateDisplay(checkInDate));
+        formData.set('checkOut', formatDateDisplay(checkOutDate));
+        formData.set('weddingInterest', document.getElementById('weddingInterest').checked ? 'Yes' : 'No');
+
+        // Calculate nights
+        const nights = Math.round((checkOutDate - checkInDate) / (1000 * 60 * 60 * 24));
+        formData.set('nights', nights + ' night(s)');
 
         try {
             const response = await fetch(FORMSPREE_URL, {
