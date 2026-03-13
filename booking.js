@@ -424,6 +424,28 @@ document.addEventListener('DOMContentLoaded', () => {
         const nights = Math.round((checkOutDate - checkInDate) / (1000 * 60 * 60 * 24));
         formData.set('nights', nights + ' night(s)');
 
+        // Calculate and attach price breakdown
+        const RATE_WEEKDAY = 1800;
+        const RATE_WEEKEND = 2000;
+        const CLEANING_FEE = 500;
+        const TAX_RATE = 0.0825;
+        let roomTotal = 0;
+        const d = new Date(checkInDate);
+        while (d < checkOutDate) {
+            const day = d.getDay();
+            roomTotal += (day === 5 || day === 6) ? RATE_WEEKEND : RATE_WEEKDAY;
+            d.setDate(d.getDate() + 1);
+        }
+        const subtotal = roomTotal + CLEANING_FEE;
+        const tax = subtotal * TAX_RATE;
+        const total = subtotal + tax;
+        const fmt = (n) => '$' + n.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+        formData.set('price_room_subtotal', fmt(roomTotal));
+        formData.set('price_cleaning_fee', fmt(CLEANING_FEE));
+        formData.set('price_subtotal', fmt(subtotal));
+        formData.set('price_tax', fmt(tax) + ' (8.25%)');
+        formData.set('price_total', fmt(total));
+
         try {
             const response = await fetch(FORMSPREE_URL, {
                 method: 'POST',
