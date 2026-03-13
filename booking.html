@@ -167,7 +167,7 @@
                 <!-- Stay Details with Calendar -->
                 <div class="form-section">
                     <h3 class="form-section-title">Select Your Dates</h3>
-                    <p class="calendar-instructions">Click a date to set check-in, then click another to set check-out. <span class="unavailable-legend">Red dates</span> are unavailable.</p>
+                    <p class="calendar-instructions">Click a date to set check-in, then click another to set check-out. Minimum stay is <strong>2 nights</strong>. <span class="unavailable-legend">Red dates</span> are unavailable.</p>
 
                     <!-- Calendar Widget -->
                     <div class="calendar-widget">
@@ -191,6 +191,12 @@
                             <input type="hidden" id="checkOut" name="checkOut" required>
                         </div>
                     </div>
+                    <!-- Hidden price fields for email submission -->
+                    <input type="hidden" id="priceRoomSubtotal" name="price_room_subtotal">
+                    <input type="hidden" id="priceCleaningFee" name="price_cleaning_fee">
+                    <input type="hidden" id="priceSubtotal" name="price_subtotal">
+                    <input type="hidden" id="priceTax" name="price_tax">
+                    <input type="hidden" id="priceTotal" name="price_total">
                     <div class="form-row">
                         <div class="form-group">
                             <label for="guests">Number of Guests <span class="required">*</span></label>

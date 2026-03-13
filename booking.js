@@ -280,8 +280,16 @@ document.addEventListener('DOMContentLoaded', () => {
                 checkOutDate = null;
                 selectingCheckOut = true;
             } else {
-                checkOutDate = date;
-                selectingCheckOut = false;
+                const nightsSelected = Math.round((date - checkInDate) / (1000 * 60 * 60 * 24));
+                if (nightsSelected < 2) {
+                    // Reset and show message inline via display update
+                    checkInDate = date;
+                    checkOutDate = null;
+                    selectingCheckOut = true;
+                } else {
+                    checkOutDate = date;
+                    selectingCheckOut = false;
+                }
             }
         }
 
@@ -409,6 +417,12 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
+        const totalNights = Math.round((checkOutDate - checkInDate) / (1000 * 60 * 60 * 24));
+        if (totalNights < 2) {
+            alert('A minimum of 2 nights is required.');
+            return;
+        }
+
         // Show loading state
         const originalText = submitBtn.querySelector('span').textContent;
         submitBtn.querySelector('span').textContent = 'Sending...';
@@ -440,11 +454,11 @@ document.addEventListener('DOMContentLoaded', () => {
         const tax = subtotal * TAX_RATE;
         const total = subtotal + tax;
         const fmt = (n) => '$' + n.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-        formData.set('price_room_subtotal', fmt(roomTotal));
-        formData.set('price_cleaning_fee', fmt(CLEANING_FEE));
-        formData.set('price_subtotal', fmt(subtotal));
-        formData.set('price_tax', fmt(tax) + ' (8.25%)');
-        formData.set('price_total', fmt(total));
+        document.getElementById('priceRoomSubtotal').value = fmt(roomTotal);
+        document.getElementById('priceCleaningFee').value = fmt(CLEANING_FEE);
+        document.getElementById('priceSubtotal').value = fmt(subtotal);
+        document.getElementById('priceTax').value = fmt(tax) + ' (8.25%)';
+        document.getElementById('priceTotal').value = fmt(total);
 
         try {
             const response = await fetch(FORMSPREE_URL, {
