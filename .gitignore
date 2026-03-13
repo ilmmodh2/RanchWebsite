@@ -1,0 +1,9 @@
+# macOS
+.DS_Store
+**/.DS_Store
+
+# Original high-res photos (use photos/ folder instead)
+Photo Gallery/
+
+# Large video — host externally (YouTube/Vimeo)
+Videos/Ranch Main Video.mp4
