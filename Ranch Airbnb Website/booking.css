@@ -564,6 +564,88 @@
     transform: rotate(45deg) translate(-1px, -1px);
 }
 
+/* --- Cost Breakdown --- */
+.cost-breakdown {
+    margin-top: 2rem;
+    padding: 1.5rem;
+    background: rgba(200, 169, 110, 0.05);
+    border: 1px solid rgba(200, 169, 110, 0.15);
+    border-radius: 10px;
+}
+
+.cost-breakdown .form-section-title {
+    margin-bottom: 1.25rem;
+}
+
+.breakdown-table {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+}
+
+.breakdown-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.75rem 0;
+    font-size: 0.95rem;
+    color: var(--color-text-muted);
+}
+
+.breakdown-label {
+    font-weight: 500;
+}
+
+.breakdown-value {
+    font-weight: 600;
+    color: var(--color-text);
+    text-align: right;
+}
+
+.breakdown-subtotal {
+    padding-top: 0.5rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 1px solid rgba(200, 169, 110, 0.1);
+    color: var(--color-text-muted);
+}
+
+.breakdown-subtotal .breakdown-value {
+    color: var(--color-text);
+}
+
+.breakdown-divider {
+    padding-top: 0.75rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 1px solid rgba(200, 169, 110, 0.1);
+}
+
+.breakdown-divider .breakdown-label {
+    font-weight: 600;
+    color: var(--color-text);
+}
+
+.breakdown-divider .breakdown-value {
+    font-weight: 700;
+    color: var(--color-accent);
+}
+
+.breakdown-total {
+    padding-top: 1rem;
+    font-size: 1.1rem;
+}
+
+.breakdown-total .breakdown-label {
+    font-weight: 700;
+    color: var(--color-text);
+    font-size: 1rem;
+}
+
+.breakdown-total .breakdown-value {
+    font-weight: 700;
+    color: var(--color-accent);
+    font-size: 1.1rem;
+}
+
 /* Form Actions */
 .form-actions {
     text-align: center;
@@ -752,6 +834,74 @@
     }
 
     .form-container {
-        padding: 0 0.5rem;
+        padding: 0 0.25rem;
+    }
+
+    /* Larger tap targets for calendar days on mobile */
+    .calendar-day {
+        padding: 0.7rem 0.15rem;
+        font-size: 0.9rem;
+        min-height: 36px;
+    }
+
+    .calendar-weekday {
+        font-size: 0.65rem;
+        padding: 0.3rem 0;
+    }
+
+    .calendar-container {
+        padding: 1rem 0.75rem;
+    }
+
+    .calendar-header h4 {
+        font-size: 0.95rem;
+    }
+
+    .selected-dates-display {
+        flex-direction: column;
+        gap: 0.75rem;
+        padding: 1rem;
+    }
+
+    .selected-date-arrow {
+        transform: rotate(90deg);
+    }
+
+    .booking-hero {
+        padding: 7rem 1.25rem 2.5rem;
+    }
+
+    .btn-submit {
+        width: 100%;
+        justify-content: center;
+    }
+
+    .direct-booking-section {
+        padding: 3rem 1.25rem 4rem;
+    }
+
+    .quick-info-item {
+        font-size: 0.85rem;
+    }
+
+    .cost-breakdown {
+        padding: 1rem;
+    }
+
+    .breakdown-row {
+        padding: 0.6rem 0;
+        font-size: 0.9rem;
+    }
+
+    .breakdown-total {
+        padding-top: 0.75rem;
+    }
+
+    .breakdown-total .breakdown-label {
+        font-size: 0.95rem;
+    }
+
+    .breakdown-total .breakdown-value {
+        font-size: 1rem;
     }
 }

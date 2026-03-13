@@ -101,34 +101,34 @@ document.addEventListener('DOMContentLoaded', () => {
     // Fetch unavailable dates from Airbnb via Google Apps Script proxy
     async function fetchAirbnbCalendar() {
         if (!CALENDAR_PROXY_URL) {
-            console.log('No calendar proxy URL set. Using fallback dates.');
+            console.log('No calendar proxy URL configured.');
             return;
         }
 
         try {
             const response = await fetch(CALENDAR_PROXY_URL);
+            if (!response.ok) throw new Error(`HTTP ${response.status}`);
             const data = await response.json();
 
-            if (data.unavailableDates && data.unavailableDates.length > 0) {
-                // Clear any fallback dates
-                unavailableDates.clear();
+            // Always clear existing dates and apply live data (even if 0 bookings)
+            unavailableDates.clear();
 
+            if (data.unavailableDates && data.unavailableDates.length > 0) {
                 data.unavailableDates.forEach(range => {
                     addUnavailableRange(range.start, range.end);
                 });
-
                 console.log(`Synced ${data.unavailableDates.length} booking(s) from Airbnb`);
-                renderCalendars();
+            } else {
+                console.log('Airbnb calendar synced — no current bookings blocked.');
             }
+
+            renderCalendars();
         } catch (err) {
-            console.warn('Could not fetch Airbnb calendar, using fallback dates:', err);
+            console.warn('Could not fetch Airbnb calendar:', err);
         }
     }
 
-    // Fallback dates (used until Google Apps Script proxy is deployed)
-    addUnavailableRange('2026-03-20', '2026-03-25');
-    addUnavailableRange('2026-04-10', '2026-04-15');
-    addUnavailableRange('2026-04-28', '2026-05-02');
+    // No hardcoded fallback dates — live Airbnb sync handles all blocked dates.
 
     const MONTH_NAMES = ['January', 'February', 'March', 'April', 'May', 'June',
         'July', 'August', 'September', 'October', 'November', 'December'];
@@ -289,6 +289,52 @@ document.addEventListener('DOMContentLoaded', () => {
         renderCalendars();
     }
 
+    function calculateCostBreakdown() {
+        if (!checkInDate || !checkOutDate) {
+            document.getElementById('costBreakdown').style.display = 'none';
+            return;
+        }
+
+        const RATE_WEEKDAY = 1800;  // Sun-Thu
+        const RATE_WEEKEND = 2000;  // Fri-Sat
+        const CLEANING_FEE = 500;
+        const TAX_RATE = 0.0825;
+
+        // Calculate number of nights and room rate
+        const nights = Math.round((checkOutDate - checkInDate) / (1000 * 60 * 60 * 24));
+        let roomTotal = 0;
+
+        // Calculate room rate by checking each night
+        const currentDate = new Date(checkInDate);
+        while (currentDate < checkOutDate) {
+            const dayOfWeek = currentDate.getDay();
+            // Friday (5) and Saturday (6) are $2000, all others are $1800
+            const isWeekend = dayOfWeek === 5 || dayOfWeek === 6;
+            roomTotal += isWeekend ? RATE_WEEKEND : RATE_WEEKDAY;
+            currentDate.setDate(currentDate.getDate() + 1);
+        }
+
+        // Calculate totals
+        const subtotal = roomTotal + CLEANING_FEE;
+        const tax = subtotal * TAX_RATE;
+        const total = subtotal + tax;
+
+        // Determine average nightly rate for display
+        const avgRate = roomTotal / nights;
+        const rateDisplay = avgRate === RATE_WEEKDAY ? `$${RATE_WEEKDAY.toLocaleString()}` : `$${RATE_WEEKDAY.toLocaleString()} - $${RATE_WEEKEND.toLocaleString()}`;
+
+        // Update the breakdown display
+        document.getElementById('roomRateDisplay').textContent = rateDisplay;
+        document.getElementById('nightsDisplay').textContent = nights;
+        document.getElementById('roomSubtotalDisplay').textContent = `$${roomTotal.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+        document.getElementById('subtotalDisplay').textContent = `$${subtotal.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+        document.getElementById('taxDisplay').textContent = `$${tax.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+        document.getElementById('totalDisplay').textContent = `$${total.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+
+        // Show the cost breakdown
+        document.getElementById('costBreakdown').style.display = 'block';
+    }
+
     function updateDateDisplay() {
         if (checkInDate) {
             displayCheckIn.textContent = formatDateDisplay(checkInDate);
@@ -309,6 +355,9 @@ document.addEventListener('DOMContentLoaded', () => {
             displayCheckOut.classList.remove('has-date');
             hiddenCheckOut.value = '';
         }
+
+        // Update cost breakdown
+        calculateCostBreakdown();
     }
 
     function renderCalendars() {

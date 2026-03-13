@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Book Your Stay | Bois De Chenes — Beaumont, Texas</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="booking.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body class="booking-page">
+
+    <!-- Navigation -->
+    <nav class="navbar scrolled" id="navbar">
+        <a href="index.html" class="nav-logo">BOIS DE CHENES</a>
+        <div class="nav-links">
+            <a href="index.html#amenities">Amenities</a>
+            <a href="index.html#spaces">Spaces</a>
+            <a href="index.html#weddings">Weddings</a>
+            <a href="index.html#details">Details</a>
+            <a href="booking.html" class="nav-book-btn">Book Now</a>
+        </div>
+        <div class="nav-hamburger" id="hamburger">
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
+    </nav>
+
+    <!-- Mobile Menu -->
+    <div class="mobile-menu" id="mobileMenu">
+        <a href="index.html#amenities">Amenities</a>
+        <a href="index.html#spaces">Spaces</a>
+        <a href="index.html#weddings">Weddings</a>
+        <a href="index.html#details">Details</a>
+        <a href="booking.html" class="nav-book-btn">Book Now</a>
+    </div>
+
+    <!-- Booking Hero -->
+    <section class="booking-hero">
+        <div class="booking-hero-content">
+            <p class="section-label">RESERVATIONS</p>
+            <h1 class="booking-hero-title">Book Your Private Resort</h1>
+            <p class="booking-hero-subtitle">Choose how you'd like to reserve Bois De Chenes</p>
+        </div>
+    </section>
+
+    <!-- Booking Options -->
+    <section class="booking-options">
+        <div class="booking-options-grid">
+
+            <!-- Direct Booking Card -->
+            <div class="booking-option-card direct-card">
+                <div class="card-badge">Recommended</div>
+                <div class="card-icon">
+                    <svg viewBox="0 0 64 64" fill="none">
+                        <rect x="8" y="12" width="48" height="40" rx="4" stroke="currentColor" stroke-width="2.5"/>
+                        <path d="M8 24h48" stroke="currentColor" stroke-width="2.5"/>
+                        <path d="M20 12V8M44 12V8" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
+                        <circle cx="24" cy="34" r="2.5" fill="currentColor"/>
+                        <circle cx="32" cy="34" r="2.5" fill="currentColor"/>
+                        <circle cx="40" cy="34" r="2.5" fill="currentColor"/>
+                        <circle cx="24" cy="42" r="2.5" fill="currentColor"/>
+                        <circle cx="32" cy="42" r="2.5" fill="currentColor"/>
+                    </svg>
+                </div>
+                <h2>Book Direct</h2>
+                <p class="card-description">Book directly with us for a personal touch, flexible arrangements, and direct communication with the property owners.</p>
+                <ul class="card-perks">
+                    <li>
+                        <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><circle cx="9" cy="9" r="8" stroke="currentColor" stroke-width="1.5"/><path d="M5.5 9.5l2 2 5-5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                        Direct communication with owners
+                    </li>
+                    <li>
+                        <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><circle cx="9" cy="9" r="8" stroke="currentColor" stroke-width="1.5"/><path d="M5.5 9.5l2 2 5-5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                        Flexible check-in / check-out
+                    </li>
+                    <li>
+                        <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><circle cx="9" cy="9" r="8" stroke="currentColor" stroke-width="1.5"/><path d="M5.5 9.5l2 2 5-5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                        Wedding & event booking available
+                    </li>
+                    <li>
+                        <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><circle cx="9" cy="9" r="8" stroke="currentColor" stroke-width="1.5"/><path d="M5.5 9.5l2 2 5-5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                        Custom packages for large groups
+                    </li>
+                </ul>
+                <a href="#direct-booking" class="btn-book-direct">
+                    Book Direct Below
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M12 5v14M5 12l7 7 7-7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                </a>
+            </div>
+
+            <!-- Airbnb Card -->
+            <div class="booking-option-card airbnb-card">
+                <div class="card-icon">
+                    <svg viewBox="0 0 64 64" fill="none">
+                        <path d="M32 14c-6 0-11 4-13 10-1 3-1 6 0 9 2 6 8 14 13 23 5-9 11-17 13-23 1-3 1-6 0-9-2-6-7-10-13-10z" stroke="currentColor" stroke-width="2.5" stroke-linejoin="round"/>
+                        <circle cx="32" cy="28" r="5" stroke="currentColor" stroke-width="2.5"/>
+                    </svg>
+                </div>
+                <h2>Book on Airbnb</h2>
+                <p class="card-description">Prefer the convenience and protection of Airbnb? Book through our verified Airbnb listing with reviews and secure payment.</p>
+                <ul class="card-perks">
+                    <li>
+                        <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><circle cx="9" cy="9" r="8" stroke="currentColor" stroke-width="1.5"/><path d="M5.5 9.5l2 2 5-5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                        Airbnb guest protection
+                    </li>
+                    <li>
+                        <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><circle cx="9" cy="9" r="8" stroke="currentColor" stroke-width="1.5"/><path d="M5.5 9.5l2 2 5-5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                        Verified reviews from past guests
+                    </li>
+                    <li>
+                        <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><circle cx="9" cy="9" r="8" stroke="currentColor" stroke-width="1.5"/><path d="M5.5 9.5l2 2 5-5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                        Secure online payment
+                    </li>
+                    <li>
+                        <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><circle cx="9" cy="9" r="8" stroke="currentColor" stroke-width="1.5"/><path d="M5.5 9.5l2 2 5-5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                        24/7 Airbnb support
+                    </li>
+                </ul>
+                <a href="https://www.airbnb.com/rooms/1058351092745200159?unique_share_id=06615079-ceb5-447d-a8fa-3e8b1ed66b85&viralityEntryPoint=1&s=76" target="_blank" class="btn-book-airbnb">
+                    Book on Airbnb
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M5 12h14M12 5l7 7-7 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                </a>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- Direct Booking Form -->
+    <section class="direct-booking-section" id="direct-booking">
+        <div class="form-container">
+            <div class="form-header">
+                <p class="section-label">DIRECT RESERVATION</p>
+                <h2 class="section-title">Reserve Bois De Chenes</h2>
+                <p class="form-intro">Fill out the form below and we'll get back to you within 24 hours to confirm your booking and discuss any special arrangements.</p>
+            </div>
+
+            <form class="booking-form" id="bookingForm">
+                <!-- Personal Info -->
+                <div class="form-section">
+                    <h3 class="form-section-title">Guest Information</h3>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="firstName">First Name <span class="required">*</span></label>
+                            <input type="text" id="firstName" name="firstName" required placeholder="John">
+                        </div>
+                        <div class="form-group">
+                            <label for="lastName">Last Name <span class="required">*</span></label>
+                            <input type="text" id="lastName" name="lastName" required placeholder="Doe">
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="email">Email Address <span class="required">*</span></label>
+                            <input type="email" id="email" name="email" required placeholder="john@example.com">
+                        </div>
+                        <div class="form-group">
+                            <label for="phone">Phone Number <span class="required">*</span></label>
+                            <input type="tel" id="phone" name="phone" required placeholder="(555) 123-4567">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Stay Details with Calendar -->
+                <div class="form-section">
+                    <h3 class="form-section-title">Select Your Dates</h3>
+                    <p class="calendar-instructions">Click a date to set check-in, then click another to set check-out. <span class="unavailable-legend">Red dates</span> are unavailable.</p>
+
+                    <!-- Calendar Widget -->
+                    <div class="calendar-widget">
+                        <div class="calendar-container" id="calendarMonth1"></div>
+                        <div class="calendar-container" id="calendarMonth2"></div>
+                    </div>
+
+                    <!-- Selected dates display -->
+                    <div class="selected-dates-display">
+                        <div class="selected-date-box">
+                            <span class="selected-date-label">Check-in</span>
+                            <span class="selected-date-value" id="displayCheckIn">Select a date</span>
+                            <input type="hidden" id="checkIn" name="checkIn" required>
+                        </div>
+                        <div class="selected-date-arrow">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M5 12h14M12 5l7 7-7 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                        </div>
+                        <div class="selected-date-box">
+                            <span class="selected-date-label">Check-out</span>
+                            <span class="selected-date-value" id="displayCheckOut">Select a date</span>
+                            <input type="hidden" id="checkOut" name="checkOut" required>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="guests">Number of Guests <span class="required">*</span></label>
+                            <select id="guests" name="guests" required>
+                                <option value="" disabled selected>Select number of guests</option>
+                                <option value="1-5">1 – 5 Guests</option>
+                                <option value="6-10">6 – 10 Guests</option>
+                                <option value="11-15">11 – 15 Guests</option>
+                                <option value="16-20">16 – 20 Guests</option>
+                                <option value="21-25">21 – 25 Guests</option>
+                                <option value="26-30">26 – 30 Guests</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="eventType">Booking Type <span class="required">*</span></label>
+                            <select id="eventType" name="eventType" required>
+                                <option value="" disabled selected>Select booking type</option>
+                                <option value="vacation">Vacation / Getaway</option>
+                                <option value="family-reunion">Family Reunion</option>
+                                <option value="corporate">Corporate Retreat</option>
+                                <option value="wedding">Wedding</option>
+                                <option value="birthday">Birthday / Celebration</option>
+                                <option value="other">Other Event</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Special Requests -->
+                <div class="form-section">
+                    <h3 class="form-section-title">Additional Information</h3>
+                    <div class="form-group full-width">
+                        <label for="message">Special Requests or Questions</label>
+                        <textarea id="message" name="message" rows="5" placeholder="Tell us about your trip — any special arrangements, questions about the property, or details we should know..."></textarea>
+                    </div>
+
+                    <div class="form-group full-width checkbox-group">
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="weddingInterest" name="weddingInterest">
+                            <span class="checkmark"></span>
+                            I'm interested in hosting a wedding or special event (additional fees apply)
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Submit -->
+                <div class="form-actions">
+                    <button type="submit" class="btn-submit">
+                        <span>Submit Reservation Request</span>
+                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M5 12h14M12 5l7 7-7 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                    </button>
+                    <p class="form-note">We'll confirm availability and send you a booking confirmation within 24 hours.</p>
+                </div>
+            </form>
+
+            <!-- Success Message -->
+            <div class="form-success" id="formSuccess">
+                <div class="success-icon">
+                    <svg width="64" height="64" viewBox="0 0 64 64" fill="none">
+                        <circle cx="32" cy="32" r="28" stroke="currentColor" stroke-width="2.5"/>
+                        <path d="M20 33l8 8 16-16" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                </div>
+                <h2>Reservation Request Sent!</h2>
+                <p>Thank you for choosing Bois De Chenes. We'll review your request and get back to you within 24 hours with confirmation and next steps.</p>
+                <div class="success-actions">
+                    <a href="index.html" class="btn-primary">Back to Home</a>
+                    <a href="https://www.airbnb.com/rooms/1058351092745200159?unique_share_id=06615079-ceb5-447d-a8fa-3e8b1ed66b85&viralityEntryPoint=1&s=76" target="_blank" class="btn-secondary">Or Book Instantly on Airbnb</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Quick Info Bar -->
+    <section class="quick-info-bar">
+        <div class="quick-info-grid">
+            <div class="quick-info-item">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z" stroke="currentColor" stroke-width="1.5"/><circle cx="12" cy="9" r="2.5" stroke="currentColor" stroke-width="1.5"/></svg>
+                <span>Beaumont, Texas</span>
+            </div>
+            <div class="quick-info-item">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" stroke="currentColor" stroke-width="1.5"/><path d="M9 22V12h6v10" stroke="currentColor" stroke-width="1.5"/></svg>
+                <span>6 Bedrooms, 25 Beds</span>
+            </div>
+            <div class="quick-info-item">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2" stroke="currentColor" stroke-width="1.5"/><circle cx="9" cy="7" r="4" stroke="currentColor" stroke-width="1.5"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75" stroke="currentColor" stroke-width="1.5"/></svg>
+                <span>Up to 30 Guests</span>
+            </div>
+            <div class="quick-info-item">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><rect x="3" y="4" width="18" height="18" rx="2" stroke="currentColor" stroke-width="1.5"/><path d="M16 2v4M8 2v4M3 10h18" stroke="currentColor" stroke-width="1.5"/></svg>
+                <span>200 Acres of Private Land</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-brand">
+                <h3>BOIS DE CHENES</h3>
+                <p>Your Private Resort in Beaumont, Texas</p>
+            </div>
+            <div class="footer-links">
+                <a href="index.html#amenities">Amenities</a>
+                <a href="index.html#spaces">Experience</a>
+                <a href="index.html#weddings">Weddings</a>
+                <a href="index.html#details">Details</a>
+            </div>
+            <div class="footer-cta">
+                <a href="https://www.airbnb.com/rooms/1058351092745200159?unique_share_id=06615079-ceb5-447d-a8fa-3e8b1ed66b85&viralityEntryPoint=1&s=76" target="_blank" class="btn-primary">Book on Airbnb</a>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2026 Bois De Chenes. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <!-- GSAP -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+    <script src="booking.js"></script>
+</body>
+</html>
