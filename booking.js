@@ -424,7 +424,7 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        // Calculate price breakdown and populate hidden inputs BEFORE FormData is built
+        // Calculate price breakdown
         const RATE_WEEKDAY = 1800;
         const RATE_WEEKEND = 2000;
         const CLEANING_FEE = 500;
@@ -440,33 +440,43 @@ document.addEventListener('DOMContentLoaded', () => {
         const tax = subtotal * TAX_RATE;
         const total = subtotal + tax;
         const fmt = (n) => '$' + n.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-        document.getElementById('priceRoomSubtotal').value = fmt(roomTotal);
-        document.getElementById('priceCleaningFee').value = fmt(CLEANING_FEE);
-        document.getElementById('priceSubtotal').value = fmt(subtotal);
-        document.getElementById('priceTax').value = fmt(tax) + ' (8.25%)';
-        document.getElementById('priceTotal').value = fmt(total);
 
         // Show loading state
         const originalText = submitBtn.querySelector('span').textContent;
         submitBtn.querySelector('span').textContent = 'Sending...';
         submitBtn.disabled = true;
 
-        // Build form data (hidden inputs are now populated above)
-        const formData = new FormData(bookingForm);
-        formData.set('checkIn', formatDateDisplay(checkInDate));
-        formData.set('checkOut', formatDateDisplay(checkOutDate));
-        formData.set('weddingInterest', document.getElementById('weddingInterest').checked ? 'Yes' : 'No');
-
-        // Calculate nights
-        const nights = Math.round((checkOutDate - checkInDate) / (1000 * 60 * 60 * 24));
-        formData.set('nights', nights + ' night(s)');
+        // Build submission data as explicit JSON (more reliable than FormData)
+        const submitData = {
+            firstName: document.getElementById('firstName').value,
+            lastName: document.getElementById('lastName').value,
+            email: document.getElementById('email').value,
+            phone: document.getElementById('phone').value,
+            checkIn: formatDateDisplay(checkInDate),
+            checkOut: formatDateDisplay(checkOutDate),
+            nights: totalNights + ' night(s)',
+            guests: document.getElementById('guests').value,
+            eventType: document.getElementById('eventType').value,
+            message: document.getElementById('message').value,
+            weddingInterest: document.getElementById('weddingInterest').checked ? 'Yes' : 'No',
+            price_room_subtotal: fmt(roomTotal),
+            price_cleaning_fee: fmt(CLEANING_FEE),
+            price_subtotal: fmt(subtotal),
+            price_tax: fmt(tax) + ' (8.25%)',
+            price_total: fmt(total)
+        };
 
         try {
             const response = await fetch(FORMSPREE_URL, {
                 method: 'POST',
-                body: formData,
-                headers: { 'Accept': 'application/json' }
+                body: JSON.stringify(submitData),
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                }
             });
+
+            const responseData = await response.json();
 
             if (response.ok) {
                 // Success — show confirmation
@@ -474,13 +484,13 @@ document.addEventListener('DOMContentLoaded', () => {
                 formSuccess.classList.add('visible');
                 formSuccess.scrollIntoView({ behavior: 'smooth', block: 'center' });
             } else {
-                const data = await response.json();
-                const errorMsg = data.errors ? data.errors.map(e => e.message).join(', ') : 'Something went wrong.';
+                const errorMsg = responseData.errors ? responseData.errors.map(e => e.message).join(', ') : 'Something went wrong.';
                 alert('Submission failed: ' + errorMsg);
                 submitBtn.querySelector('span').textContent = originalText;
                 submitBtn.disabled = false;
             }
         } catch (err) {
+            console.error('Form submission error:', err);
             alert('Network error. Please try again or book through Airbnb.');
             submitBtn.querySelector('span').textContent = originalText;
             submitBtn.disabled = false;
