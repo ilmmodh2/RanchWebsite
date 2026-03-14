@@ -81,11 +81,18 @@
     box-shadow: 0 8px 40px rgba(0,0,0,0.4);
 }
 
-.gallery-video-wrapper video {
+.youtube-embed {
+    position: relative;
+    padding-top: 56.25%;
+}
+
+.youtube-embed iframe {
+    position: absolute;
+    top: 0;
+    left: 0;
     width: 100%;
-    display: block;
-    max-height: 70vh;
-    object-fit: contain;
+    height: 100%;
+    border: none;
 }
 
 /* --- Gallery Section --- */
