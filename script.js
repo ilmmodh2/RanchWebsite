@@ -203,20 +203,6 @@ document.addEventListener('DOMContentLoaded', () => {
     );
 
     // =====================
-    // RANCH MAIN — Full Walkthrough (scroll-driven)
-    // =====================
-    setupScrollVideo(
-        document.getElementById('walkthroughVideo'),
-        document.getElementById('walkthroughSection'),
-        [
-            { el: '#walkText1', start: 0.02, end: 0.2 },
-            { el: '#walkText2', start: 0.25, end: 0.45 },
-            { el: '#walkText3', start: 0.5, end: 0.7 },
-            { el: '#walkText4', start: 0.75, end: 0.95 }
-        ]
-    );
-
-    // =====================
     // AMENITY CARDS
     // =====================
     gsap.utils.toArray('.amenity-card').forEach((card, i) => {

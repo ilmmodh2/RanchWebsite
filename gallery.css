@@ -1,5 +1,5 @@
 /* ============================================
-   BOIS DE CHENES — Gallery Page Styles
+   RANCH 105 — Gallery Page Styles
    ============================================ */
 
 .gallery-page {
@@ -46,6 +46,46 @@
 
 .active-link {
     color: var(--color-accent) !important;
+}
+
+/* --- Walkthrough Video Section --- */
+.gallery-video-section {
+    padding: 3rem 2rem 4rem;
+    max-width: 1100px;
+    margin: 0 auto;
+    text-align: center;
+}
+
+.gallery-video-header {
+    margin-bottom: 2rem;
+}
+
+.gallery-video-title {
+    font-family: var(--font-display);
+    font-size: clamp(1.6rem, 3vw, 2.2rem);
+    color: var(--color-text);
+    margin: 0.4rem 0 0.6rem;
+}
+
+.gallery-video-subtitle {
+    font-size: 1rem;
+    color: var(--color-text-muted);
+}
+
+.gallery-video-wrapper {
+    position: relative;
+    width: 100%;
+    border-radius: 12px;
+    overflow: hidden;
+    background: #000;
+    box-shadow: 0 8px 40px rgba(0,0,0,0.4);
+}
+
+.gallery-video-wrapper video {
+    width: 100%;
+    display: block;
+    max-height: 70vh;
+    object-fit: contain;
 }
 
 /* --- Gallery Section --- */

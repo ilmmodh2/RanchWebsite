@@ -1,26 +1,10 @@
 /* ============================================
-   BOIS DE CHENES — Booking Page Scripts
-   Calendar Sync + Native Formspree Submission
+   RANCH 105 — Booking Page Scripts
+   Calendar Sync + Formspree Submission
    ============================================ */
 
 gsap.registerPlugin(ScrollTrigger);
 
-// =====================
-// CHECK FOR SUCCESSFUL SUBMISSION REDIRECT
-// =====================
-// Formspree redirects back here with ?success=true after submission
-if (new URLSearchParams(window.location.search).get('success') === 'true') {
-    document.addEventListener('DOMContentLoaded', () => {
-        const bookingForm = document.getElementById('bookingForm');
-        const formSuccess = document.getElementById('formSuccess');
-        if (bookingForm && formSuccess) {
-            bookingForm.style.display = 'none';
-            formSuccess.classList.add('visible');
-        }
-        // Clean the URL
-        window.history.replaceState({}, '', window.location.pathname);
-    });
-}
 
 document.addEventListener('DOMContentLoaded', () => {
 
@@ -365,50 +349,34 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // =====================
-    // FORM SUBMISSION — NATIVE HTML POST (no fetch)
-    // The form has action="https://formspree.io/f/xvzwadky" method="POST"
-    // set directly in the HTML. This handler only does validation and
-    // populates hidden fields. The browser handles the actual HTTP POST.
+    // FORM SUBMISSION — fetch + FormData
     // =====================
     var bookingForm = document.getElementById('bookingForm');
     var submitBtn = bookingForm.querySelector('.btn-submit');
+    var formSuccess = document.getElementById('formSuccess');
 
     bookingForm.addEventListener('submit', function(e) {
+        e.preventDefault();
 
-        // === CUSTOM VALIDATION (only preventDefault if invalid) ===
+        // Validation
         if (!checkInDate || !checkOutDate) {
-            e.preventDefault();
             alert('Please select both check-in and check-out dates from the calendar.');
             return;
         }
-
         if (checkOutDate <= checkInDate) {
-            e.preventDefault();
             alert('Check-out must be after check-in.');
             return;
         }
-
         var totalNights = Math.round((checkOutDate - checkInDate) / (1000 * 60 * 60 * 24));
         if (totalNights < 2) {
-            e.preventDefault();
             alert('A minimum of 2 nights is required.');
             return;
         }
 
-        // === VALIDATION PASSED — POPULATE HIDDEN FIELDS ===
-
-        // Dates are already set in display format by updateDateDisplay()
-
-        // Set redirect URL so Formspree sends us back after submission
-        document.getElementById('formNext').value = window.location.origin + window.location.pathname + '?success=true';
-
-        // Nights
+        // Populate hidden fields
         document.getElementById('nightsField').value = totalNights + ' night(s)';
-
-        // Wedding interest
         document.getElementById('weddingField').value = document.getElementById('weddingInterest').checked ? 'Yes' : 'No';
 
-        // Calculate and set price breakdown
         var RATE_WEEKDAY = 1800;
         var RATE_WEEKEND = 2000;
         var CLEANING_FEE = 500;
@@ -416,28 +384,48 @@ document.addEventListener('DOMContentLoaded', () => {
         var roomTotal = 0;
         var d = new Date(checkInDate);
         while (d < checkOutDate) {
-            var day = d.getDay();
-            roomTotal += (day === 5 || day === 6) ? RATE_WEEKEND : RATE_WEEKDAY;
+            var dow = d.getDay();
+            roomTotal += (dow === 5 || dow === 6) ? RATE_WEEKEND : RATE_WEEKDAY;
             d.setDate(d.getDate() + 1);
         }
         var subtotal = roomTotal + CLEANING_FEE;
         var tax = subtotal * TAX_RATE;
         var total = subtotal + tax;
         var fmt = function(n) { return '$' + n.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }); };
-
         document.getElementById('priceRoomSubtotal').value = fmt(roomTotal);
         document.getElementById('priceCleaningFee').value = fmt(CLEANING_FEE);
         document.getElementById('priceSubtotal').value = fmt(subtotal);
         document.getElementById('priceTax').value = fmt(tax) + ' (8.25%)';
         document.getElementById('priceTotal').value = fmt(total);
 
-        // Show loading state
+        // Loading state
         submitBtn.querySelector('span').textContent = 'Sending...';
         submitBtn.disabled = true;
 
-        // === DO NOT CALL e.preventDefault() ===
-        // The browser will now submit the form natively via the action attribute.
-        // Formspree will process it and redirect back to ?success=true
+        var formData = new FormData(bookingForm);
+
+        fetch('https://formspree.io/f/xvzwadky', {
+            method: 'POST',
+            headers: { 'Accept': 'application/json' },
+            body: formData
+        })
+        .then(function(response) {
+            if (response.ok) {
+                bookingForm.style.display = 'none';
+                formSuccess.classList.add('visible');
+                formSuccess.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            } else {
+                return response.json().then(function(data) {
+                    throw new Error(data.error || 'Submission failed');
+                });
+            }
+        })
+        .catch(function(err) {
+            console.error('Submission error:', err);
+            submitBtn.querySelector('span').textContent = 'Submit Reservation Request';
+            submitBtn.disabled = false;
+            alert('There was an error sending your request. Please try again or email us directly.');
+        });
     });
 
     // =====================
