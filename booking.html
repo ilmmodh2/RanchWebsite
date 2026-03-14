@@ -138,7 +138,16 @@
                 <p class="form-intro">Fill out the form below and we'll get back to you within 24 hours to confirm your booking and discuss any special arrangements.</p>
             </div>
 
-            <form class="booking-form" id="bookingForm">
+            <form class="booking-form" id="bookingForm" action="https://formspree.io/f/xvzwadky" method="POST">
+                <!-- Formspree redirect + extra fields populated by JS -->
+                <input type="hidden" name="_next" id="formNext" value="">
+                <input type="hidden" name="nights" id="nightsField" value="">
+                <input type="hidden" name="weddingInterest" id="weddingField" value="No">
+                <input type="hidden" name="price_room_subtotal" id="priceRoomSubtotal" value="">
+                <input type="hidden" name="price_cleaning_fee" id="priceCleaningFee" value="">
+                <input type="hidden" name="price_subtotal" id="priceSubtotal" value="">
+                <input type="hidden" name="price_tax" id="priceTax" value="">
+                <input type="hidden" name="price_total" id="priceTotal" value="">
                 <!-- Personal Info -->
                 <div class="form-section">
                     <h3 class="form-section-title">Guest Information</h3>
@@ -268,7 +277,7 @@
 
                     <div class="form-group full-width checkbox-group">
                         <label class="checkbox-label">
-                            <input type="checkbox" id="weddingInterest" name="weddingInterest">
+                            <input type="checkbox" id="weddingInterest">
                             <span class="checkmark"></span>
                             I'm interested in hosting a wedding or special event (additional fees apply)
                         </label>
@@ -350,6 +359,6 @@
     <!-- GSAP -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
-    <script src="booking.js?v=6"></script>
+    <script src="booking.js?v=7"></script>
 </body>
 </html>

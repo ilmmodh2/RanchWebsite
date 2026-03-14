@@ -1,23 +1,33 @@
 /* ============================================
    BOIS DE CHENES — Booking Page Scripts
-   Calendar Sync + Formspree Email
+   Calendar Sync + Native Formspree Submission
    ============================================ */
 
 gsap.registerPlugin(ScrollTrigger);
+
+// =====================
+// CHECK FOR SUCCESSFUL SUBMISSION REDIRECT
+// =====================
+// Formspree redirects back here with ?success=true after submission
+if (new URLSearchParams(window.location.search).get('success') === 'true') {
+    document.addEventListener('DOMContentLoaded', () => {
+        const bookingForm = document.getElementById('bookingForm');
+        const formSuccess = document.getElementById('formSuccess');
+        if (bookingForm && formSuccess) {
+            bookingForm.style.display = 'none';
+            formSuccess.classList.add('visible');
+        }
+        // Clean the URL
+        window.history.replaceState({}, '', window.location.pathname);
+    });
+}
 
 document.addEventListener('DOMContentLoaded', () => {
 
     // =====================
     // CONFIG
     // =====================
-
-    // Formspree endpoint for email submissions
-    const FORMSPREE_URL = 'https://formspree.io/f/xvzwadky';
-
-    // Google Apps Script proxy URL for Airbnb calendar sync
-    // INSTRUCTIONS: Deploy the google-apps-script.js file to Google Apps Script,
-    // then paste your Web App URL below. Until then, it uses fallback dates.
-    const CALENDAR_PROXY_URL = 'https://script.google.com/macros/s/AKfycbyTAGBP7MN9fknRhkD5ZX_Dw2QcCYe9iPx_ZRHbAWW_9KwzJWDEflC-amlvmjtlbaZh/exec';  // Paste your Google Apps Script URL here
+    const CALENDAR_PROXY_URL = 'https://script.google.com/macros/s/AKfycbyTAGBP7MN9fknRhkD5ZX_Dw2QcCYe9iPx_ZRHbAWW_9KwzJWDEflC-amlvmjtlbaZh/exec';
 
     // =====================
     // MOBILE MENU
@@ -98,37 +108,26 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // Fetch unavailable dates from Airbnb via Google Apps Script proxy
     async function fetchAirbnbCalendar() {
-        if (!CALENDAR_PROXY_URL) {
-            console.log('No calendar proxy URL configured.');
-            return;
-        }
-
+        if (!CALENDAR_PROXY_URL) return;
         try {
             const response = await fetch(CALENDAR_PROXY_URL);
-            if (!response.ok) throw new Error(`HTTP ${response.status}`);
+            if (!response.ok) throw new Error('HTTP ' + response.status);
             const data = await response.json();
-
-            // Always clear existing dates and apply live data (even if 0 bookings)
             unavailableDates.clear();
-
             if (data.unavailableDates && data.unavailableDates.length > 0) {
                 data.unavailableDates.forEach(range => {
                     addUnavailableRange(range.start, range.end);
                 });
-                console.log(`Synced ${data.unavailableDates.length} booking(s) from Airbnb`);
+                console.log('Synced ' + data.unavailableDates.length + ' booking(s) from Airbnb');
             } else {
                 console.log('Airbnb calendar synced — no current bookings blocked.');
             }
-
             renderCalendars();
         } catch (err) {
             console.warn('Could not fetch Airbnb calendar:', err);
         }
     }
-
-    // No hardcoded fallback dates — live Airbnb sync handles all blocked dates.
 
     const MONTH_NAMES = ['January', 'February', 'March', 'April', 'May', 'June',
         'July', 'August', 'September', 'October', 'November', 'December'];
@@ -151,7 +150,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const hiddenCheckOut = document.getElementById('checkOut');
 
     function formatDateDisplay(date) {
-        return `${MONTH_NAMES[date.getMonth()].slice(0, 3)} ${date.getDate()}, ${date.getFullYear()}`;
+        return MONTH_NAMES[date.getMonth()].slice(0, 3) + ' ' + date.getDate() + ', ' + date.getFullYear();
     }
 
     function formatDateISO(date) {
@@ -185,40 +184,36 @@ document.addEventListener('DOMContentLoaded', () => {
         const firstDay = new Date(year, month, 1).getDay();
         const daysInMonth = new Date(year, month + 1, 0).getDate();
 
-        let html = `<div class="calendar-header">`;
+        let html = '<div class="calendar-header">';
         if (showNav === 'left') {
-            html += `<button class="calendar-nav" data-dir="-1">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M15 18l-6-6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-            </button>`;
+            html += '<button class="calendar-nav" data-dir="-1"><svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M15 18l-6-6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>';
         } else {
-            html += `<span></span>`;
+            html += '<span></span>';
         }
-        html += `<h4>${MONTH_NAMES[month]} ${year}</h4>`;
+        html += '<h4>' + MONTH_NAMES[month] + ' ' + year + '</h4>';
         if (showNav === 'right') {
-            html += `<button class="calendar-nav" data-dir="1">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M9 18l6-6-6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-            </button>`;
+            html += '<button class="calendar-nav" data-dir="1"><svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M9 18l6-6-6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>';
         } else {
-            html += `<span></span>`;
+            html += '<span></span>';
         }
-        html += `</div>`;
+        html += '</div>';
 
-        html += `<div class="calendar-weekdays">`;
-        DAY_NAMES.forEach(d => {
-            html += `<div class="calendar-weekday">${d}</div>`;
+        html += '<div class="calendar-weekdays">';
+        DAY_NAMES.forEach(function(d) {
+            html += '<div class="calendar-weekday">' + d + '</div>';
         });
-        html += `</div>`;
+        html += '</div>';
 
-        html += `<div class="calendar-days">`;
+        html += '<div class="calendar-days">';
 
-        for (let i = 0; i < firstDay; i++) {
-            html += `<div class="calendar-day empty"></div>`;
+        for (var i = 0; i < firstDay; i++) {
+            html += '<div class="calendar-day empty"></div>';
         }
 
-        for (let day = 1; day <= daysInMonth; day++) {
-            const date = new Date(year, month, day);
-            const dateStr = formatDateISO(date);
-            let classes = 'calendar-day';
+        for (var day = 1; day <= daysInMonth; day++) {
+            var date = new Date(year, month, day);
+            var dateStr = formatDateISO(date);
+            var classes = 'calendar-day';
 
             if (isPast(date)) {
                 classes += ' past';
@@ -226,34 +221,23 @@ document.addEventListener('DOMContentLoaded', () => {
                 classes += ' unavailable';
             }
 
-            if (dateStr === formatDateISO(today)) {
-                classes += ' today';
-            }
-
+            if (dateStr === formatDateISO(today)) classes += ' today';
             if (checkInDate && dateStr === formatDateISO(checkInDate)) {
                 classes += ' selected range-start';
-                if (checkOutDate && dateStr === formatDateISO(checkOutDate)) {
-                    classes += ' range-end';
-                }
+                if (checkOutDate && dateStr === formatDateISO(checkOutDate)) classes += ' range-end';
             }
+            if (checkOutDate && dateStr === formatDateISO(checkOutDate)) classes += ' selected range-end';
+            if (isInRange(date) && !isUnavailable(date)) classes += ' in-range';
 
-            if (checkOutDate && dateStr === formatDateISO(checkOutDate)) {
-                classes += ' selected range-end';
-            }
-
-            if (isInRange(date) && !isUnavailable(date)) {
-                classes += ' in-range';
-            }
-
-            html += `<div class="${classes}" data-date="${dateStr}">${day}</div>`;
+            html += '<div class="' + classes + '" data-date="' + dateStr + '">' + day + '</div>';
         }
 
-        html += `</div>`;
+        html += '</div>';
         container.innerHTML = html;
 
-        container.querySelectorAll('.calendar-nav').forEach(btn => {
-            btn.addEventListener('click', () => {
-                const dir = parseInt(btn.dataset.dir);
+        container.querySelectorAll('.calendar-nav').forEach(function(btn) {
+            btn.addEventListener('click', function() {
+                var dir = parseInt(btn.dataset.dir);
                 currentMonth += dir;
                 if (currentMonth > 11) { currentMonth = 0; currentYear++; }
                 if (currentMonth < 0) { currentMonth = 11; currentYear--; }
@@ -261,9 +245,9 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         });
 
-        container.querySelectorAll('.calendar-day:not(.empty):not(.past):not(.unavailable)').forEach(dayEl => {
-            dayEl.addEventListener('click', () => {
-                const clickedDate = new Date(dayEl.dataset.date + 'T00:00:00');
+        container.querySelectorAll('.calendar-day:not(.empty):not(.past):not(.unavailable)').forEach(function(dayEl) {
+            dayEl.addEventListener('click', function() {
+                var clickedDate = new Date(dayEl.dataset.date + 'T00:00:00');
                 handleDateClick(clickedDate);
             });
         });
@@ -281,7 +265,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 checkOutDate = null;
                 selectingCheckOut = true;
             } else {
-                const nightsSelected = Math.round((date - checkInDate) / (1000 * 60 * 60 * 24));
+                var nightsSelected = Math.round((date - checkInDate) / (1000 * 60 * 60 * 24));
                 if (nightsSelected < 2) {
                     document.getElementById('minStayError').style.display = 'block';
                     checkOutDate = null;
@@ -293,7 +277,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             }
         }
-
         updateDateDisplay();
         renderCalendars();
     }
@@ -303,44 +286,31 @@ document.addEventListener('DOMContentLoaded', () => {
             document.getElementById('costBreakdown').style.display = 'none';
             return;
         }
-
-        const RATE_WEEKDAY = 1800;  // Sun-Thu
-        const RATE_WEEKEND = 2000;  // Fri-Sat
-        const CLEANING_FEE = 500;
-        const TAX_RATE = 0.0825;
-
-        // Calculate number of nights and room rate
-        const nights = Math.round((checkOutDate - checkInDate) / (1000 * 60 * 60 * 24));
-        let roomTotal = 0;
-
-        // Calculate room rate by checking each night
-        const currentDate = new Date(checkInDate);
-        while (currentDate < checkOutDate) {
-            const dayOfWeek = currentDate.getDay();
-            // Friday (5) and Saturday (6) are $2000, all others are $1800
-            const isWeekend = dayOfWeek === 5 || dayOfWeek === 6;
-            roomTotal += isWeekend ? RATE_WEEKEND : RATE_WEEKDAY;
-            currentDate.setDate(currentDate.getDate() + 1);
+        var RATE_WEEKDAY = 1800;
+        var RATE_WEEKEND = 2000;
+        var CLEANING_FEE = 500;
+        var TAX_RATE = 0.0825;
+        var nights = Math.round((checkOutDate - checkInDate) / (1000 * 60 * 60 * 24));
+        var roomTotal = 0;
+        var cur = new Date(checkInDate);
+        while (cur < checkOutDate) {
+            var dow = cur.getDay();
+            roomTotal += (dow === 5 || dow === 6) ? RATE_WEEKEND : RATE_WEEKDAY;
+            cur.setDate(cur.getDate() + 1);
         }
+        var subtotal = roomTotal + CLEANING_FEE;
+        var tax = subtotal * TAX_RATE;
+        var total = subtotal + tax;
+        var avgRate = roomTotal / nights;
+        var rateDisplay = avgRate === RATE_WEEKDAY ? '$' + RATE_WEEKDAY.toLocaleString() : '$' + RATE_WEEKDAY.toLocaleString() + ' - $' + RATE_WEEKEND.toLocaleString();
+        var fmtMoney = function(n) { return '$' + n.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }); };
 
-        // Calculate totals
-        const subtotal = roomTotal + CLEANING_FEE;
-        const tax = subtotal * TAX_RATE;
-        const total = subtotal + tax;
-
-        // Determine average nightly rate for display
-        const avgRate = roomTotal / nights;
-        const rateDisplay = avgRate === RATE_WEEKDAY ? `$${RATE_WEEKDAY.toLocaleString()}` : `$${RATE_WEEKDAY.toLocaleString()} - $${RATE_WEEKEND.toLocaleString()}`;
-
-        // Update the breakdown display
         document.getElementById('roomRateDisplay').textContent = rateDisplay;
         document.getElementById('nightsDisplay').textContent = nights;
-        document.getElementById('roomSubtotalDisplay').textContent = `$${roomTotal.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
-        document.getElementById('subtotalDisplay').textContent = `$${subtotal.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
-        document.getElementById('taxDisplay').textContent = `$${tax.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
-        document.getElementById('totalDisplay').textContent = `$${total.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
-
-        // Show the cost breakdown
+        document.getElementById('roomSubtotalDisplay').textContent = fmtMoney(roomTotal);
+        document.getElementById('subtotalDisplay').textContent = fmtMoney(subtotal);
+        document.getElementById('taxDisplay').textContent = fmtMoney(tax);
+        document.getElementById('totalDisplay').textContent = fmtMoney(total);
         document.getElementById('costBreakdown').style.display = 'block';
     }
 
@@ -348,7 +318,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (checkInDate) {
             displayCheckIn.textContent = formatDateDisplay(checkInDate);
             displayCheckIn.classList.add('has-date');
-            hiddenCheckIn.value = formatDateISO(checkInDate);
+            hiddenCheckIn.value = formatDateDisplay(checkInDate);
         } else {
             displayCheckIn.textContent = 'Select a date';
             displayCheckIn.classList.remove('has-date');
@@ -358,158 +328,127 @@ document.addEventListener('DOMContentLoaded', () => {
         if (checkOutDate) {
             displayCheckOut.textContent = formatDateDisplay(checkOutDate);
             displayCheckOut.classList.add('has-date');
-            hiddenCheckOut.value = formatDateISO(checkOutDate);
+            hiddenCheckOut.value = formatDateDisplay(checkOutDate);
         } else {
             displayCheckOut.textContent = selectingCheckOut ? 'Select check-out' : 'Select a date';
             displayCheckOut.classList.remove('has-date');
             hiddenCheckOut.value = '';
         }
 
-        // Update cost breakdown
         calculateCostBreakdown();
     }
 
     function renderCalendars() {
-        let month2 = currentMonth + 1;
-        let year2 = currentYear;
+        var month2 = currentMonth + 1;
+        var year2 = currentYear;
         if (month2 > 11) { month2 = 0; year2++; }
-
         renderMonth(cal1, currentYear, currentMonth, 'left');
         renderMonth(cal2, year2, month2, 'right');
     }
 
-    // Initial render, then fetch live Airbnb data
     renderCalendars();
     fetchAirbnbCalendar();
 
     // =====================
     // PHONE FORMATTING
     // =====================
-    const phoneInput = document.getElementById('phone');
-    phoneInput.addEventListener('input', (e) => {
-        let value = e.target.value.replace(/\D/g, '');
+    var phoneInput = document.getElementById('phone');
+    phoneInput.addEventListener('input', function(e) {
+        var value = e.target.value.replace(/\D/g, '');
         if (value.length > 10) value = value.slice(0, 10);
         if (value.length >= 6) {
-            value = `(${value.slice(0, 3)}) ${value.slice(3, 6)}-${value.slice(6)}`;
+            value = '(' + value.slice(0, 3) + ') ' + value.slice(3, 6) + '-' + value.slice(6);
         } else if (value.length >= 3) {
-            value = `(${value.slice(0, 3)}) ${value.slice(3)}`;
+            value = '(' + value.slice(0, 3) + ') ' + value.slice(3);
         }
         e.target.value = value;
     });
 
     // =====================
-    // FORM SUBMISSION → FORMSPREE
+    // FORM SUBMISSION — NATIVE HTML POST (no fetch)
+    // The form has action="https://formspree.io/f/xvzwadky" method="POST"
+    // set directly in the HTML. This handler only does validation and
+    // populates hidden fields. The browser handles the actual HTTP POST.
     // =====================
-    const bookingForm = document.getElementById('bookingForm');
-    const formSuccess = document.getElementById('formSuccess');
-    const submitBtn = bookingForm.querySelector('.btn-submit');
+    var bookingForm = document.getElementById('bookingForm');
+    var submitBtn = bookingForm.querySelector('.btn-submit');
 
-    bookingForm.addEventListener('submit', (e) => {
-        e.preventDefault();
+    bookingForm.addEventListener('submit', function(e) {
 
-        // Validate dates
+        // === CUSTOM VALIDATION (only preventDefault if invalid) ===
         if (!checkInDate || !checkOutDate) {
+            e.preventDefault();
             alert('Please select both check-in and check-out dates from the calendar.');
             return;
         }
 
         if (checkOutDate <= checkInDate) {
+            e.preventDefault();
             alert('Check-out must be after check-in.');
             return;
         }
 
-        const totalNights = Math.round((checkOutDate - checkInDate) / (1000 * 60 * 60 * 24));
+        var totalNights = Math.round((checkOutDate - checkInDate) / (1000 * 60 * 60 * 24));
         if (totalNights < 2) {
+            e.preventDefault();
             alert('A minimum of 2 nights is required.');
             return;
         }
+
+        // === VALIDATION PASSED — POPULATE HIDDEN FIELDS ===
+
+        // Dates are already set in display format by updateDateDisplay()
+
+        // Set redirect URL so Formspree sends us back after submission
+        document.getElementById('formNext').value = window.location.origin + window.location.pathname + '?success=true';
+
+        // Nights
+        document.getElementById('nightsField').value = totalNights + ' night(s)';
+
+        // Wedding interest
+        document.getElementById('weddingField').value = document.getElementById('weddingInterest').checked ? 'Yes' : 'No';
+
+        // Calculate and set price breakdown
+        var RATE_WEEKDAY = 1800;
+        var RATE_WEEKEND = 2000;
+        var CLEANING_FEE = 500;
+        var TAX_RATE = 0.0825;
+        var roomTotal = 0;
+        var d = new Date(checkInDate);
+        while (d < checkOutDate) {
+            var day = d.getDay();
+            roomTotal += (day === 5 || day === 6) ? RATE_WEEKEND : RATE_WEEKDAY;
+            d.setDate(d.getDate() + 1);
+        }
+        var subtotal = roomTotal + CLEANING_FEE;
+        var tax = subtotal * TAX_RATE;
+        var total = subtotal + tax;
+        var fmt = function(n) { return '$' + n.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }); };
+
+        document.getElementById('priceRoomSubtotal').value = fmt(roomTotal);
+        document.getElementById('priceCleaningFee').value = fmt(CLEANING_FEE);
+        document.getElementById('priceSubtotal').value = fmt(subtotal);
+        document.getElementById('priceTax').value = fmt(tax) + ' (8.25%)';
+        document.getElementById('priceTotal').value = fmt(total);
 
         // Show loading state
         submitBtn.querySelector('span').textContent = 'Sending...';
         submitBtn.disabled = true;
 
-        // Calculate price breakdown
-        const RATE_WEEKDAY = 1800;
-        const RATE_WEEKEND = 2000;
-        const CLEANING_FEE = 500;
-        const TAX_RATE = 0.0825;
-        let roomTotal = 0;
-        const d = new Date(checkInDate);
-        while (d < checkOutDate) {
-            const day = d.getDay();
-            roomTotal += (day === 5 || day === 6) ? RATE_WEEKEND : RATE_WEEKDAY;
-            d.setDate(d.getDate() + 1);
-        }
-        const subtotal = roomTotal + CLEANING_FEE;
-        const tax = subtotal * TAX_RATE;
-        const total = subtotal + tax;
-        const fmt = (n) => '$' + n.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-
-        // Build all form fields
-        const fields = {
-            firstName: document.getElementById('firstName').value,
-            lastName: document.getElementById('lastName').value,
-            email: document.getElementById('email').value,
-            phone: document.getElementById('phone').value,
-            checkIn: formatDateDisplay(checkInDate),
-            checkOut: formatDateDisplay(checkOutDate),
-            nights: totalNights + ' night(s)',
-            guests: document.getElementById('guests').value,
-            eventType: document.getElementById('eventType').value,
-            message: document.getElementById('message').value,
-            weddingInterest: document.getElementById('weddingInterest').checked ? 'Yes' : 'No',
-            price_room_subtotal: fmt(roomTotal),
-            price_cleaning_fee: fmt(CLEANING_FEE),
-            price_subtotal: fmt(subtotal),
-            price_tax: fmt(tax) + ' (8.25%)',
-            price_total: fmt(total)
-        };
-
-        // === NATIVE FORM SUBMISSION (no fetch, no CORS, no JavaScript HTTP) ===
-        // Create a hidden iframe so the page doesn't navigate away
-        const iframe = document.createElement('iframe');
-        iframe.name = 'formspree_submit_' + Date.now();
-        iframe.style.display = 'none';
-        document.body.appendChild(iframe);
-
-        // Create a clean temporary form with only our fields
-        const tempForm = document.createElement('form');
-        tempForm.method = 'POST';
-        tempForm.action = FORMSPREE_URL;
-        tempForm.target = iframe.name;
-        tempForm.style.display = 'none';
-        tempForm.acceptCharset = 'utf-8';
-
-        for (const [key, value] of Object.entries(fields)) {
-            const input = document.createElement('input');
-            input.type = 'hidden';
-            input.name = key;
-            input.value = value;
-            tempForm.appendChild(input);
-        }
-
-        document.body.appendChild(tempForm);
-        tempForm.submit();
-
-        // Show success after submission processes
-        setTimeout(() => {
-            bookingForm.style.display = 'none';
-            formSuccess.classList.add('visible');
-            formSuccess.scrollIntoView({ behavior: 'smooth', block: 'center' });
-            if (tempForm.parentNode) tempForm.parentNode.removeChild(tempForm);
-            if (iframe.parentNode) iframe.parentNode.removeChild(iframe);
-        }, 2500);
+        // === DO NOT CALL e.preventDefault() ===
+        // The browser will now submit the form natively via the action attribute.
+        // Formspree will process it and redirect back to ?success=true
     });
 
     // =====================
     // SMOOTH SCROLL
     // =====================
-    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-        anchor.addEventListener('click', function (e) {
-            const targetId = this.getAttribute('href');
+    document.querySelectorAll('a[href^="#"]').forEach(function(anchor) {
+        anchor.addEventListener('click', function(e) {
+            var targetId = this.getAttribute('href');
             if (targetId === '#') return;
             e.preventDefault();
-            const target = document.querySelector(targetId);
+            var target = document.querySelector(targetId);
             if (target) {
                 target.scrollIntoView({ behavior: 'smooth', block: 'start' });
             }
