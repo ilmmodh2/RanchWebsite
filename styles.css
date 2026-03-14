@@ -1061,28 +1061,6 @@ img, video {
         grid-template-columns: 1fr;
     }
 
-    /* Show full video on mobile — prevent cropping on portrait screens */
-    .hero-video-sticky video,
-    .video-scrub-wrapper video {
-        object-fit: contain;
-        background: #0a0a0a;
-    }
-
-    /* Reduce scroll distance for video sections on mobile */
-    .video-scrub-section {
-        height: 200vh;
-    }
-
-    /* iOS Safari viewport height fix */
-    .hero-video-sticky {
-        height: 100vh;
-        height: 100svh;
-    }
-
-    .video-scrub-wrapper {
-        height: 100vh;
-        height: 100svh;
-    }
 
     .weddings-content {
         grid-template-columns: 1fr;
