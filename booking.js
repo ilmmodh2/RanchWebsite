@@ -424,7 +424,21 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        // Calculate price breakdown
+        // Show loading state
+        const originalText = submitBtn.querySelector('span').textContent;
+        submitBtn.querySelector('span').textContent = 'Sending...';
+        submitBtn.disabled = true;
+
+        // Build form data from the actual form (original working method)
+        const formData = new FormData(bookingForm);
+
+        // Override date fields with display format
+        formData.set('checkIn', formatDateDisplay(checkInDate));
+        formData.set('checkOut', formatDateDisplay(checkOutDate));
+        formData.set('weddingInterest', document.getElementById('weddingInterest').checked ? 'Yes' : 'No');
+        formData.set('nights', totalNights + ' night(s)');
+
+        // Calculate and add price breakdown
         const RATE_WEEKDAY = 1800;
         const RATE_WEEKEND = 2000;
         const CLEANING_FEE = 500;
@@ -441,91 +455,34 @@ document.addEventListener('DOMContentLoaded', () => {
         const total = subtotal + tax;
         const fmt = (n) => '$' + n.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 
-        // Show loading state
-        const originalText = submitBtn.querySelector('span').textContent;
-        submitBtn.querySelector('span').textContent = 'Sending...';
-        submitBtn.disabled = true;
-
-        // Build submission data as explicit JSON (more reliable than FormData)
-        const submitData = {
-            firstName: document.getElementById('firstName').value,
-            lastName: document.getElementById('lastName').value,
-            email: document.getElementById('email').value,
-            phone: document.getElementById('phone').value,
-            checkIn: formatDateDisplay(checkInDate),
-            checkOut: formatDateDisplay(checkOutDate),
-            nights: totalNights + ' night(s)',
-            guests: document.getElementById('guests').value,
-            eventType: document.getElementById('eventType').value,
-            message: document.getElementById('message').value,
-            weddingInterest: document.getElementById('weddingInterest').checked ? 'Yes' : 'No',
-            price_room_subtotal: fmt(roomTotal),
-            price_cleaning_fee: fmt(CLEANING_FEE),
-            price_subtotal: fmt(subtotal),
-            price_tax: fmt(tax) + ' (8.25%)',
-            price_total: fmt(total)
-        };
-
-        // Submit via native form post to hidden iframe (bypasses ad blockers / fetch interception)
-        function submitViaNativeForm(data) {
-            const iframe = document.createElement('iframe');
-            iframe.name = 'formspree_target';
-            iframe.style.display = 'none';
-            document.body.appendChild(iframe);
-
-            const tempForm = document.createElement('form');
-            tempForm.method = 'POST';
-            tempForm.action = FORMSPREE_URL;
-            tempForm.target = 'formspree_target';
-            tempForm.style.display = 'none';
-
-            for (const [key, value] of Object.entries(data)) {
-                const input = document.createElement('input');
-                input.type = 'hidden';
-                input.name = key;
-                input.value = value;
-                tempForm.appendChild(input);
-            }
-
-            document.body.appendChild(tempForm);
-            tempForm.submit();
-
-            // Show success after Formspree processes (native form POST is reliable)
-            setTimeout(() => {
-                bookingForm.style.display = 'none';
-                formSuccess.classList.add('visible');
-                formSuccess.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                if (tempForm.parentNode) tempForm.parentNode.removeChild(tempForm);
-                if (iframe.parentNode) iframe.parentNode.removeChild(iframe);
-            }, 2000);
-        }
+        formData.set('price_room_subtotal', fmt(roomTotal));
+        formData.set('price_cleaning_fee', fmt(CLEANING_FEE));
+        formData.set('price_subtotal', fmt(subtotal));
+        formData.set('price_tax', fmt(tax) + ' (8.25%)');
+        formData.set('price_total', fmt(total));
 
         try {
             const response = await fetch(FORMSPREE_URL, {
                 method: 'POST',
-                body: JSON.stringify(submitData),
-                headers: {
-                    'Accept': 'application/json',
-                    'Content-Type': 'application/json'
-                }
+                body: formData,
+                headers: { 'Accept': 'application/json' }
             });
 
-            const responseData = await response.json();
-
-            if (responseData && responseData.ok === true) {
-                // Verified real Formspree response
+            if (response.ok) {
                 bookingForm.style.display = 'none';
                 formSuccess.classList.add('visible');
                 formSuccess.scrollIntoView({ behavior: 'smooth', block: 'center' });
             } else {
-                // Response doesn't match Formspree format — likely intercepted, use native fallback
-                console.warn('Fetch response not from Formspree, using native form submission');
-                submitViaNativeForm(submitData);
+                const data = await response.json();
+                const errorMsg = data.errors ? data.errors.map(e => e.message).join(', ') : 'Something went wrong.';
+                alert('Submission failed: ' + errorMsg);
+                submitBtn.querySelector('span').textContent = originalText;
+                submitBtn.disabled = false;
             }
         } catch (err) {
-            // Fetch failed entirely — use native fallback
-            console.warn('Fetch failed, using native form submission:', err);
-            submitViaNativeForm(submitData);
+            alert('Network error. Please try again or book through Airbnb.');
+            submitBtn.querySelector('span').textContent = originalText;
+            submitBtn.disabled = false;
         }
     });
 
