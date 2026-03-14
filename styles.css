@@ -758,6 +758,22 @@ img, video {
     opacity: 0.2;
 }
 
+.weddings-photo {
+    border-radius: 12px;
+    overflow: hidden;
+    height: 420px;
+    position: relative;
+}
+
+.weddings-photo img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center top;
+    display: block;
+}
+
+/* keep old placeholder styles for fallback — hidden by new class */
 .weddings-image-placeholder {
     background: var(--color-surface);
     border: 1px solid rgba(200, 169, 110, 0.15);
@@ -771,22 +787,6 @@ img, video {
     color: var(--color-accent);
     position: relative;
     overflow: hidden;
-}
-
-.weddings-image-placeholder::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: radial-gradient(ellipse at center, rgba(200, 169, 110, 0.05), transparent);
-}
-
-.weddings-image-placeholder svg {
-    width: 120px;
-    height: 120px;
-    opacity: 0.4;
 }
 
 .weddings-image-placeholder span {
@@ -1057,6 +1057,29 @@ img, video {
 
     .experience-cards {
         grid-template-columns: 1fr;
+    }
+
+    /* Show full video on mobile — prevent cropping on portrait screens */
+    .hero-video-sticky video,
+    .video-scrub-wrapper video {
+        object-fit: contain;
+        background: #0a0a0a;
+    }
+
+    /* Reduce scroll distance for video sections on mobile */
+    .video-scrub-section {
+        height: 200vh;
+    }
+
+    /* iOS Safari viewport height fix */
+    .hero-video-sticky {
+        height: 100vh;
+        height: 100svh;
+    }
+
+    .video-scrub-wrapper {
+        height: 100vh;
+        height: 100svh;
     }
 
     .weddings-content {
