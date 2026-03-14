@@ -404,7 +404,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const formSuccess = document.getElementById('formSuccess');
     const submitBtn = bookingForm.querySelector('.btn-submit');
 
-    bookingForm.addEventListener('submit', async (e) => {
+    bookingForm.addEventListener('submit', (e) => {
         e.preventDefault();
 
         // Validate dates
@@ -425,20 +425,10 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         // Show loading state
-        const originalText = submitBtn.querySelector('span').textContent;
         submitBtn.querySelector('span').textContent = 'Sending...';
         submitBtn.disabled = true;
 
-        // Build form data from the actual form (original working method)
-        const formData = new FormData(bookingForm);
-
-        // Override date fields with display format
-        formData.set('checkIn', formatDateDisplay(checkInDate));
-        formData.set('checkOut', formatDateDisplay(checkOutDate));
-        formData.set('weddingInterest', document.getElementById('weddingInterest').checked ? 'Yes' : 'No');
-        formData.set('nights', totalNights + ' night(s)');
-
-        // Calculate and add price breakdown
+        // Calculate price breakdown
         const RATE_WEEKDAY = 1800;
         const RATE_WEEKEND = 2000;
         const CLEANING_FEE = 500;
@@ -455,35 +445,60 @@ document.addEventListener('DOMContentLoaded', () => {
         const total = subtotal + tax;
         const fmt = (n) => '$' + n.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 
-        formData.set('price_room_subtotal', fmt(roomTotal));
-        formData.set('price_cleaning_fee', fmt(CLEANING_FEE));
-        formData.set('price_subtotal', fmt(subtotal));
-        formData.set('price_tax', fmt(tax) + ' (8.25%)');
-        formData.set('price_total', fmt(total));
+        // Build all form fields
+        const fields = {
+            firstName: document.getElementById('firstName').value,
+            lastName: document.getElementById('lastName').value,
+            email: document.getElementById('email').value,
+            phone: document.getElementById('phone').value,
+            checkIn: formatDateDisplay(checkInDate),
+            checkOut: formatDateDisplay(checkOutDate),
+            nights: totalNights + ' night(s)',
+            guests: document.getElementById('guests').value,
+            eventType: document.getElementById('eventType').value,
+            message: document.getElementById('message').value,
+            weddingInterest: document.getElementById('weddingInterest').checked ? 'Yes' : 'No',
+            price_room_subtotal: fmt(roomTotal),
+            price_cleaning_fee: fmt(CLEANING_FEE),
+            price_subtotal: fmt(subtotal),
+            price_tax: fmt(tax) + ' (8.25%)',
+            price_total: fmt(total)
+        };
 
-        try {
-            const response = await fetch(FORMSPREE_URL, {
-                method: 'POST',
-                body: formData,
-                headers: { 'Accept': 'application/json' }
-            });
+        // === NATIVE FORM SUBMISSION (no fetch, no CORS, no JavaScript HTTP) ===
+        // Create a hidden iframe so the page doesn't navigate away
+        const iframe = document.createElement('iframe');
+        iframe.name = 'formspree_submit_' + Date.now();
+        iframe.style.display = 'none';
+        document.body.appendChild(iframe);
 
-            if (response.ok) {
-                bookingForm.style.display = 'none';
-                formSuccess.classList.add('visible');
-                formSuccess.scrollIntoView({ behavior: 'smooth', block: 'center' });
-            } else {
-                const data = await response.json();
-                const errorMsg = data.errors ? data.errors.map(e => e.message).join(', ') : 'Something went wrong.';
-                alert('Submission failed: ' + errorMsg);
-                submitBtn.querySelector('span').textContent = originalText;
-                submitBtn.disabled = false;
-            }
-        } catch (err) {
-            alert('Network error. Please try again or book through Airbnb.');
-            submitBtn.querySelector('span').textContent = originalText;
-            submitBtn.disabled = false;
+        // Create a clean temporary form with only our fields
+        const tempForm = document.createElement('form');
+        tempForm.method = 'POST';
+        tempForm.action = FORMSPREE_URL;
+        tempForm.target = iframe.name;
+        tempForm.style.display = 'none';
+        tempForm.acceptCharset = 'utf-8';
+
+        for (const [key, value] of Object.entries(fields)) {
+            const input = document.createElement('input');
+            input.type = 'hidden';
+            input.name = key;
+            input.value = value;
+            tempForm.appendChild(input);
         }
+
+        document.body.appendChild(tempForm);
+        tempForm.submit();
+
+        // Show success after submission processes
+        setTimeout(() => {
+            bookingForm.style.display = 'none';
+            formSuccess.classList.add('visible');
+            formSuccess.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            if (tempForm.parentNode) tempForm.parentNode.removeChild(tempForm);
+            if (iframe.parentNode) iframe.parentNode.removeChild(iframe);
+        }, 2500);
     });
 
     // =====================
