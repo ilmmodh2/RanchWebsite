@@ -369,6 +369,38 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // =====================
+    // REVIEWS DRAG SCROLL
+    // =====================
+    const reviewsTrack = document.getElementById('reviewsTrack');
+    if (reviewsTrack) {
+        let isDown = false;
+        let startX;
+        let scrollLeft;
+
+        reviewsTrack.addEventListener('mousedown', (e) => {
+            isDown = true;
+            reviewsTrack.classList.add('dragging');
+            startX = e.pageX - reviewsTrack.offsetLeft;
+            scrollLeft = reviewsTrack.scrollLeft;
+        });
+        reviewsTrack.addEventListener('mouseleave', () => {
+            isDown = false;
+            reviewsTrack.classList.remove('dragging');
+        });
+        reviewsTrack.addEventListener('mouseup', () => {
+            isDown = false;
+            reviewsTrack.classList.remove('dragging');
+        });
+        reviewsTrack.addEventListener('mousemove', (e) => {
+            if (!isDown) return;
+            e.preventDefault();
+            const x = e.pageX - reviewsTrack.offsetLeft;
+            const walk = (x - startX) * 1.5;
+            reviewsTrack.scrollLeft = scrollLeft - walk;
+        });
+    }
+
+    // =====================
     // SMOOTH SCROLL FOR NAV
     // =====================
     document.querySelectorAll('a[href^="#"]').forEach(anchor => {
