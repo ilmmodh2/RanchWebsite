@@ -1216,9 +1216,9 @@ img, video {
 }
 
 .review-text {
-    font-family: var(--font-display);
-    font-size: 1rem;
-    font-style: italic;
+    font-family: var(--font-body);
+    font-size: 0.95rem;
+    font-style: normal;
     color: var(--color-text);
     line-height: 1.75;
     flex: 1;
