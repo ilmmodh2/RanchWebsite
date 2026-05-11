@@ -5,49 +5,8 @@
 
 gsap.registerPlugin(ScrollTrigger);
 
-/* ===================== PAGE LOADER ===================== */
-function runLoader(onComplete) {
-    const loader   = document.getElementById('siteLoader');
-    const letters  = document.querySelectorAll('.site-loader-logo span');
-    const tagline  = document.querySelector('.site-loader-tagline');
-    const barWrap  = document.querySelector('.site-loader-bar-wrap');
-    const bar      = document.getElementById('siteLoaderBar');
-
-    const tl = gsap.timeline({
-        onComplete() {
-            gsap.to(loader, {
-                opacity: 0,
-                duration: 0.65,
-                ease: 'power2.in',
-                onComplete() {
-                    loader.style.display = 'none';
-                    document.body.style.overflow = '';
-                    if (onComplete) onComplete();
-                }
-            });
-        }
-    });
-
-    tl.to(letters, {
-            y: 0, opacity: 1,
-            duration: 0.055, stagger: 0.055,
-            ease: 'power2.out'
-        }, 0.3)
-      .to([tagline, barWrap], { opacity: 1, duration: 0.5 }, '-=0.1')
-      .to(bar,  { width: '100%', duration: 1.3, ease: 'power2.inOut' }, '-=0.3')
-      .to('.site-loader-content', {
-            y: -24, opacity: 0,
-            duration: 0.5, ease: 'power2.in'
-        }, '+=0.2');
-}
-/* ======================================================= */
-
 // --- Wait for DOM ---
 document.addEventListener('DOMContentLoaded', () => {
-
-    // Prevent scroll and hide hero name while loader runs
-    document.body.style.overflow = 'hidden';
-    gsap.set('.hero-name-center', { opacity: 0 });
 
     // =====================
     // NAVBAR
@@ -171,22 +130,20 @@ document.addEventListener('DOMContentLoaded', () => {
     const frontIntroVideo = document.getElementById('frontIntroVideo');
     const heroSection = document.getElementById('heroVideo');
 
-    // Hero entrance — runs after loader completes
-    runLoader(() => {
-        gsap.timeline({ delay: 0.05 })
-            .to('.hero-name-center', {
-                opacity: 1, duration: 1, ease: 'power3.out'
-            })
-            .to('.hero-subtitle', {
-                opacity: 1, y: 0, duration: 0.8, ease: 'power3.out'
-            }, '-=0.5')
-            .to('.hero-tagline', {
-                opacity: 1, y: 0, duration: 0.8, ease: 'power3.out'
-            }, '-=0.4')
-            .to('.hero-scroll-indicator', {
-                opacity: 1, y: 0, duration: 0.6, ease: 'power3.out'
-            }, '-=0.3');
-    });
+    // Hero entrance animation
+    gsap.timeline({ delay: 0.3 })
+        .to('.hero-name-center', {
+            opacity: 1, duration: 1, ease: 'power3.out'
+        })
+        .to('.hero-subtitle', {
+            opacity: 1, y: 0, duration: 0.8, ease: 'power3.out'
+        }, '-=0.5')
+        .to('.hero-tagline', {
+            opacity: 1, y: 0, duration: 0.8, ease: 'power3.out'
+        }, '-=0.4')
+        .to('.hero-scroll-indicator', {
+            opacity: 1, y: 0, duration: 0.6, ease: 'power3.out'
+        }, '-=0.3');
 
     // Fade out centered name on scroll
     gsap.fromTo('.hero-name-center',
