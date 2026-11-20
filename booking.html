@@ -234,6 +234,8 @@
                 <input type="hidden" name="price_subtotal" id="priceSubtotal" value="">
                 <input type="hidden" name="price_tax" id="priceTax" value="">
                 <input type="hidden" name="price_total" id="priceTotal" value="">
+                <!-- Honeypot: hidden from people, bots fill it in and Formspree discards the submission -->
+                <input type="text" name="_gotcha" tabindex="-1" autocomplete="off" aria-hidden="true" style="position:absolute;left:-9999px;width:1px;height:1px;opacity:0;">
                 <!-- Stay Details with Calendar -->
                 <div class="form-section">
                     <h3 class="form-section-title">Select Your Dates</h3>
@@ -357,8 +359,8 @@
                 <div class="form-section">
                     <h3 class="form-section-title">Additional Information</h3>
                     <div class="form-group full-width">
-                        <label for="message">Special Requests or Questions</label>
-                        <textarea id="message" name="message" rows="5" placeholder="Tell us about your trip — any special arrangements, questions about the property, or details we should know..."></textarea>
+                        <label for="message">Special Requests or Questions <span class="required">*</span></label>
+                        <textarea id="message" name="message" rows="5" required minlength="10" placeholder="Tell us about your trip — any special arrangements, questions about the property, or details we should know..."></textarea>
                     </div>
 
                     <div class="form-group full-width checkbox-group">
@@ -446,7 +448,7 @@
     <!-- GSAP -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
-    <script src="booking.js?v=8"></script>
+    <script src="booking.js?v=9"></script>
     <script defer src="/_vercel/insights/script.js"></script>
 </body>
 </html>

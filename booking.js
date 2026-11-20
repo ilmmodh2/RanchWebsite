@@ -11,7 +11,8 @@ document.addEventListener('DOMContentLoaded', () => {
     // =====================
     // CONFIG
     // =====================
-    const CALENDAR_PROXY_URL = 'https://script.google.com/macros/s/AKfycbyTAGBP7MN9fknRhkD5ZX_Dw2QcCYe9iPx_ZRHbAWW_9KwzJWDEflC-amlvmjtlbaZh/exec';
+    // Served by api/calendar.js (Vercel function that reads the Airbnb iCal feed)
+    const CALENDAR_PROXY_URL = '/api/calendar';
 
     // =====================
     // MOBILE MENU
@@ -82,12 +83,14 @@ document.addEventListener('DOMContentLoaded', () => {
     // =====================
     const unavailableDates = new Set();
 
+    // endStr is the checkout day (iCal DTEND is exclusive), so it stays
+    // available for a new guest to check in the same day.
     function addUnavailableRange(startStr, endStr) {
         const start = new Date(startStr + 'T00:00:00');
         const end = new Date(endStr + 'T00:00:00');
         const d = new Date(start);
-        while (d <= end) {
-            unavailableDates.add(d.toISOString().split('T')[0]);
+        while (d < end) {
+            unavailableDates.add(formatDateISO(d));
             d.setDate(d.getDate() + 1);
         }
     }
@@ -137,8 +140,11 @@ document.addEventListener('DOMContentLoaded', () => {
         return MONTH_NAMES[date.getMonth()].slice(0, 3) + ' ' + date.getDate() + ', ' + date.getFullYear();
     }
 
+    // Local-time YYYY-MM-DD (toISOString converts to UTC and can shift the day)
     function formatDateISO(date) {
-        return date.toISOString().split('T')[0];
+        return date.getFullYear() + '-' +
+            String(date.getMonth() + 1).padStart(2, '0') + '-' +
+            String(date.getDate()).padStart(2, '0');
     }
 
     function isUnavailable(date) {
